@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>游园灯</title>
+<meta name="description" content="挂上照片，让回忆随光旋转。">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/music.css">
+</head>
+<body class="shell" data-theme="night">
+<iframe id="stage" title="游园灯" allow="autoplay; fullscreen"></iframe>
+
+<div class="lyrics-inline" id="inlineLyrics" aria-hidden="true" hidden></div>
+
+<div class="player" id="player">
+  <button type="button" class="pl-add" id="plAdd"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span>添加音乐</span></button>
+  <div class="pl-main" id="plMain" hidden>
+    <button type="button" class="pl-btn play" id="plPlay" aria-label="播放"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg></button>
+    <span class="pl-title" id="plTitle"></span>
+    <span class="pl-time" id="plCur">00:00</span>
+    <div class="pl-bar" id="plBar" role="slider" tabindex="0" aria-label="播放进度"><i id="plFill"></i></div>
+    <span class="pl-time" id="plDur">00:00</span>
+    <span class="pl-tools">
+      <button type="button" class="pl-btn" id="plLyric" aria-pressed="true" aria-label="显示歌词浮层" title="歌词浮层"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="14" x="3" y="5" rx="2" ry="2"/><path d="M7 15h4M15 15h2M7 11h2M13 11h4"/></svg></button>
+      <button type="button" class="pl-btn" id="plImmerse" aria-label="沉浸式歌词" title="沉浸式歌词"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" x2="14" y1="3" y2="10"/><line x1="3" x2="10" y1="21" y2="14"/></svg></button>
+      <button type="button" class="pl-btn" id="plSettings" aria-label="更换音乐或歌词" title="更换音乐或歌词"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></button>
+    </span>
+  </div>
+</div>
+
+<section class="immersive" id="immersive" aria-label="沉浸式歌词" hidden>
+  <canvas class="dust" id="dust" aria-hidden="true"></canvas>
+  <p class="imm-title" id="immTitle"></p>
+  <div class="imm-tools">
+    <button type="button" class="pl-btn" id="immFull" aria-label="全屏" title="全屏"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" x2="14" y1="3" y2="10"/><line x1="3" x2="10" y1="21" y2="14"/></svg></button>
+    <button type="button" class="pl-btn" id="immClose" aria-label="关闭沉浸式歌词" title="关闭（Esc）"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  </div>
+  <div class="imm-stage" id="immStage" aria-live="off"></div>
+  <div class="imm-bar">
+    <button type="button" class="pl-btn play" id="immPlay" aria-label="播放"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg></button>
+    <span class="pl-time" id="immCur">00:00</span>
+    <div class="pl-bar" id="immBar" role="slider" tabindex="0" aria-label="播放进度"><i id="immFill"></i></div>
+    <span class="pl-time" id="immDur">00:00</span>
+  </div>
+</section>
+
+<div class="dialog-root" id="musicDialog" hidden>
+  <div class="dialog-overlay" data-close></div>
+  <div class="dialog-popup music-dialog" role="dialog" aria-modal="true" aria-labelledby="mdHead">
+    <div class="dialog-header">
+      <h2 class="dialog-title" id="mdHead">添加音乐</h2>
+      <p class="dialog-description">选一首歌和它的歌词。文件只保存在这台设备的浏览器里，不会上传到服务器。</p>
+    </div>
+    <div class="md-row">
+      <button type="button" class="btn btn-outline" id="mdAudioBtn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>选择音乐文件</button>
+      <span class="md-file" id="mdAudioName">还没有选择</span>
+    </div>
+    <div class="md-field">
+      <div class="md-label"><span>歌词（LRC 带时间轴，或纯文本）</span>
+        <button type="button" class="btn btn-ghost" id="mdLrcBtn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>读取 .lrc 文件</button></div>
+      <textarea id="mdLyrics" rows="7" spellcheck="false" placeholder="[00:12.00]第一句歌词&#10;[00:12.00]第一句的译文（同一时间写第二行即为译文）&#10;[00:18.50]第二句歌词 // 也可以用双斜杠接译文"></textarea>
+    </div>
+    <div class="md-two">
+      <label class="md-field"><span class="md-label">歌名</span><input id="mdTitle" autocomplete="off"></label>
+      <label class="md-field"><span class="md-label">歌手</span><input id="mdArtist" autocomplete="off"></label>
+    </div>
+    <p class="editor-error" role="alert" id="mdError" hidden></p>
+    <div class="md-footer">
+      <button type="button" class="btn btn-ghost md-remove" id="mdRemove" hidden>移除音乐</button>
+      <button type="button" class="btn btn-ghost" data-close>取消</button>
+      <button type="button" class="btn btn-default" id="mdSave"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>保存</button>
+    </div>
+    <input type="file" id="mdAudioFile" accept="audio/*,.mp3,.m4a,.aac,.ogg,.wav,.flac" hidden>
+    <input type="file" id="mdLrcFile" accept=".lrc,.txt,text/plain" hidden>
+    <button type="button" class="btn btn-ghost btn-icon-sm dialog-close" data-close aria-label="关闭"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  </div>
+</div>
+
+<output class="toast shell-toast" id="shellToast" aria-live="polite"></output>
+<audio id="audio" preload="metadata"></audio>
+<script type="module" src="js/shell.js"></script>
+</body>
+</html>

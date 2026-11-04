@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<script>if (window.top === window.self && !/[?&]solo/.test(location.search)) location.replace('index.html');</script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>游园灯</title>
+<meta name="description" content="挂上照片，让回忆随光旋转。">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<link rel="prefetch" href="map.html">
+</head>
+<body>
+<main class="workshop night" id="workshop">
+  <h1 class="ribbon-title" aria-label="Carousel Lamp">
+    <img src="assets/carousel-lamp-title-clean.png" alt="" width="900" height="780" draggable="false">
+    <span class="title-sparkles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+  </h1>
+  <div id="scene" class="scene" aria-label="可拖动旋转的三维相片旋转木马灯；也可使用下方按钮选择相片"></div>
+  <output class="loading" id="loading">正在点亮你的旋转木马…</output>
+
+  <div class="focus-bar" id="focusBar" hidden>
+    <button type="button" class="btn btn-ghost" id="prevPhoto" aria-label="上一张相片"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+    <span id="focusLabel">相片 01 / 16</span>
+    <button type="button" class="btn btn-ghost" id="nextPhoto" aria-label="下一张相片"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+    <button type="button" class="btn btn-ghost" id="backToLamp"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>整盏灯</button>
+  </div>
+
+  <div class="photo-actions" id="photoActions" hidden>
+    <button type="button" class="btn btn-default" id="editPhoto"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg><span id="editPhotoLabel">放入相片</span></button>
+    <button type="button" class="btn btn-ghost" id="removePhoto"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>取下相片</button>
+  </div>
+
+  <footer class="bottom">
+    <div class="toolbar">
+      <button type="button" class="btn btn-default upload" id="uploadBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>挂相片</button>
+      <a class="btn map-link" href="map.html"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg>查看我们走过的地图</a>
+      <button type="button" class="btn btn-ghost reset" id="resetBtn" aria-label="重置视角" disabled><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
+    </div>
+    <p class="save-status" id="saveStatus" aria-live="polite" hidden></p>
+  </footer>
+
+  <aside class="position-picker" id="picker" aria-label="选择相片位置" hidden>
+    <div class="picker-heading">
+      <div><small>第一步</small><h2>给相片选个位置</h2></div>
+      <button type="button" class="btn btn-ghost" id="closePicker" aria-label="关闭位置选择"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <p>点击下面的相片，看看它挂在哪里。</p>
+    <div class="slots" id="slots"></div>
+    <button type="button" class="btn btn-default choose-confirm" id="chooseConfirm" disabled><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 5h6"/><path d="M19 2v6"/><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><circle cx="9" cy="9" r="2"/></svg><span id="chooseConfirmLabel">先选一个位置</span></button>
+  </aside>
+</main>
+
+<div class="dialog-root" id="uploadDialog" hidden>
+  <div class="dialog-overlay" data-close></div>
+  <div class="dialog-popup upload-menu" role="dialog" aria-modal="true" aria-labelledby="uploadTitle" aria-describedby="uploadDesc">
+    <div class="dialog-header">
+      <h2 class="dialog-title" id="uploadTitle">挂上你的相片</h2>
+      <p class="dialog-description" id="uploadDesc"></p>
+    </div>
+    <button type="button" class="btn btn-default" id="pickOne">选位置挂一张</button>
+    <button type="button" class="btn btn-default batch-upload" id="batchBtn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 5h6"/><path d="M19 2v6"/><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><circle cx="9" cy="9" r="2"/></svg>批量上传</button>
+    <p id="framesFull" hidden>相框已挂满，可以点击照片更换。</p>
+    <p class="batch-help">JPG、PNG、WebP · 单张最大 50 MB · 最多选择剩余空位数量的照片</p>
+    <p role="status" id="batchProgress" hidden></p>
+    <p class="editor-error" role="alert" id="batchError" hidden></p>
+    <input type="file" id="batchInput" multiple accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif" hidden>
+    <button type="button" class="btn btn-ghost btn-icon-sm dialog-close" data-close aria-label="关闭"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  </div>
+</div>
+
+<div class="dialog-root" id="editorDialog" hidden>
+  <div class="dialog-overlay" data-close></div>
+  <div class="dialog-popup photo-editor" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+    <div class="dialog-header">
+      <h2 class="dialog-title" data-slot="dialog-title" id="editorTitle">挂在 01 号位置</h2>
+      <p class="dialog-description" data-slot="dialog-description">选择相片，调整画面，再把这一刻挂起来。相片仅保存在此浏览器，不会上传到服务器。</p>
+    </div>
+    <div class="editor-layout">
+      <div class="crop-stage">
+        <canvas id="cropCanvas" aria-label="裁剪后的相片预览" hidden></canvas>
+        <div class="empty-preview" id="emptyPreview"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 5h6"/><path d="M19 2v6"/><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><circle cx="9" cy="9" r="2"/></svg><p id="emptyPreviewText">选一张喜欢的相片</p></div>
+      </div>
+      <div class="crop-controls">
+        <button type="button" class="btn btn-outline" id="choosePhoto"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 5h6"/><path d="M19 2v6"/><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><circle cx="9" cy="9" r="2"/></svg><span id="choosePhotoLabel">选择相片</span></button>
+        <p>JPG、PNG、WebP · 最大 50 MB</p>
+        <label><span>放大画面</span><input type="range" data-crop="zoom" min="1" max="3" step="0.01" value="1" disabled></label>
+        <label><span>左右位置</span><input type="range" data-crop="x" min="-1" max="1" step="0.01" value="0" disabled></label>
+        <label><span>上下位置</span><input type="range" data-crop="y" min="-1" max="1" step="0.01" value="0" disabled></label>
+        <button type="button" class="btn btn-ghost" id="resetCrop" disabled><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>重置裁剪</button>
+      </div>
+    </div>
+    <p class="editor-error" role="alert" id="editorError" hidden></p>
+    <div class="editor-footer">
+      <button type="button" class="btn btn-ghost" id="cancelEditor">取消</button>
+      <button type="button" class="btn btn-default" id="saveEditor" disabled><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span id="saveEditorLabel">确认挂上</span></button>
+    </div>
+    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif" hidden>
+    <button type="button" class="btn btn-ghost btn-icon-sm dialog-close" data-close aria-label="关闭"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  </div>
+</div>
+
+<output aria-live="polite" class="toast" id="toast"></output>
+<script src="js/boot.js" data-entry="js/app.js"></script>
+</body>
+</html>

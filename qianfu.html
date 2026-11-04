@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<script>if (window.top === window.self && !/[?&]solo/.test(location.search)) location.replace('index.html#qianfu');</script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>潜伏手账 · 游园灯</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/qianfu/page-left.jpg" as="image">
+<link rel="preload" href="assets/qianfu/page-right.jpg" as="image">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/qianfu.css">
+<link rel="prefetch" href="credits.html">
+<link rel="prefetch" href="js/cake-show.js">
+</head>
+<body>
+<main class="qf" id="qf" data-lamp="on" data-book="closed" data-spread="0">
+
+  <!-- 三维的书房：合上手账时按住拖动可以环顾四周，点台灯可以开关。单位是 --u（手账一页宽 500u） -->
+  <div class="stage" id="stage">
+    <!-- 书房（墙、书桌、台灯、收音机）画在这块画布上，有真正的光照和阴影，见 js/study-gl.js -->
+    <canvas class="gl" id="gl" aria-hidden="true"></canvas>
+    <div class="cam" id="cam">
+      <div class="pose" id="pose">
+        <div class="book" id="book">
+        <!-- 封底：内面是“人物关系”页 -->
+        <!-- 左半边的书页和封面（翻开后才看得到） -->
+        <div class="board-left" aria-hidden="true">
+          <i class="back-cover"></i><i class="edge edge-l"></i><i class="edge edge-t"></i><i class="edge edge-b"></i>
+        </div>
+        <div class="coil" id="coil" aria-hidden="true"></div>
+        <div class="board" id="board">
+          <i class="back-cover" aria-hidden="true"></i>
+          <i class="edge edge-r" aria-hidden="true"></i><i class="edge edge-t" aria-hidden="true"></i><i class="edge edge-b" aria-hidden="true"></i>
+          <i class="ribbon" aria-hidden="true"></i>
+          <section class="page kraft chart" id="chart" aria-label="人物关系">
+            <!-- 藏在关系图后面的一枚指纹：每看一个人的说明，就显出一块（js/qianfu-app.js） -->
+            <div class="print" id="print" aria-hidden="true"><canvas class="print-ink" id="printInk"></canvas></div>
+            <button type="button" class="print print-hit" id="printHit" aria-label="指纹：还没有显完整"></button>
+            <p class="strip chart-title">人物关系</p>
+            <svg class="chart-lines" id="chartLines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <div class="chart-nodes" id="chartNodes"></div>
+            <p class="stamp" aria-hidden="true">绝密</p>
+            <p class="stamp stamp-open" aria-hidden="true">已解密</p>
+            <p class="print-meter" id="printMeter" aria-live="polite"></p>
+            <i class="washi w1" aria-hidden="true"></i><i class="washi w2" aria-hidden="true"></i>
+          </section>
+        </div>
+
+        <!-- 第二张纸：正面是《深海》，背面贴着左蓝 -->
+        <div class="leaf" id="leaf1">
+          <div class="face front page photo-page right-side" id="faceLyrics">
+            <img src="assets/qianfu/page-right.jpg" alt="" width="1240" height="1708" draggable="false">
+            <svg class="clip" viewBox="0 0 24 60" aria-hidden="true"><path d="M8 52V12a6 6 0 0 1 12 0v40a9 9 0 0 1-18 0V18" fill="none" stroke="#b9bcc0" stroke-width="2.4" stroke-linecap="round"/></svg>
+            <button type="button" class="hot whole" data-photo="lyrics" aria-label="看大图：右页《深海》"></button>
+          </div>
+          <div class="face back page kraft poster-page left-side" id="facePoster">
+            <i class="tape" aria-hidden="true"></i>
+            <button type="button" class="poster" data-photo="zuolan" aria-label="看大图：左蓝的海报">
+              <img src="assets/qianfu/zuolan.jpg" alt="" width="1080" height="2295" draggable="false" loading="lazy">
+            </button>
+            <i class="tape tape2" aria-hidden="true"></i>
+            <button type="button" class="poster note" data-photo="note" aria-label="看大图：写着一段话的旧照片">
+              <img src="assets/qianfu/note-wanqiu.jpg" alt="" width="1196" height="1576" draggable="false" loading="lazy">
+            </button>
+            <button type="button" class="poster portrait" data-photo="zuolan-photo" aria-label="看大图：左蓝的旧照">
+              <img src="assets/qianfu/zuolan-photo.jpg" alt="" width="1440" height="960" draggable="false" loading="lazy">
+            </button>
+            <i class="tape tape3" aria-hidden="true"></i>
+          </div>
+        </div>
+
+        <!-- 第一张纸：正面是扉页（白纸，右边一个索引签），背面是《深海》拼贴页的左页 -->
+        <div class="leaf" id="leafA">
+          <div class="face front page blank-page right-side" id="faceBlank">
+            <img src="assets/qianfu/inner-white.jpg" alt="" width="820" height="1170" draggable="false">
+            <i class="tab" aria-hidden="true"></i>
+            <!-- 扉页：剧组全家福（照片四角用黑色相角固定） -->
+            <p class="strip group-title">剧组全家福</p>
+            <button type="button" class="poster group-photo" data-photo="group" aria-label="看大图：《潜伏》剧组全家福">
+              <img src="assets/qianfu/group.jpg" alt="" width="1800" height="1052" draggable="false" loading="lazy">
+              <i class="corner tl" aria-hidden="true"></i><i class="corner tr" aria-hidden="true"></i><i class="corner bl" aria-hidden="true"></i><i class="corner br" aria-hidden="true"></i>
+            </button>
+            <p class="group-note">照片上的红字，是剧组的亲笔签名。</p>
+          </div>
+          <div class="face back page photo-page left-side" id="faceCollage">
+            <img src="assets/qianfu/page-left.jpg" alt="" width="1240" height="1708" draggable="false">
+            <!-- 三张剧照的位置，按百分比 -->
+            <button type="button" class="hot" data-photo="still-1" style="left:50.5%;top:5.7%;width:34.9%;height:28.6%" aria-label="看大图：左页第一张剧照"></button>
+            <button type="button" class="hot" data-photo="still-2" style="left:11.3%;top:43.1%;width:38.7%;height:18.4%" aria-label="看大图：左页第二张剧照"></button>
+            <button type="button" class="hot" data-photo="still-3" style="left:26.7%;top:61%;width:38.8%;height:18.1%" aria-label="看大图：左页第三张剧照"></button>
+          </div>
+        </div>
+
+        <!-- 封面：正面是手写的那张拼贴，背面是牛皮纸内封 -->
+        <div class="leaf cover" id="leaf0">
+          <div class="face front cover-face" id="faceCover">
+            <img class="cover-art" src="assets/qianfu/cover.jpg" alt="" width="1440" height="1886" draggable="false">
+            <i class="cover-holes" aria-hidden="true"></i>
+            <button type="button" class="cover-hit" id="coverHit" aria-label="打开手账"></button>
+          </div>
+          <div class="face back page kraft-cover left-side" id="faceKraft">
+            <img src="assets/qianfu/inner-kraft.jpg" alt="" width="820" height="1170" draggable="false">
+          </div>
+        </div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <i class="probe" id="probe" aria-hidden="true"></i>
+
+  <!-- 书桌右后角的小蛋糕（模型在 js/study-gl.js）：这一层只放跳动的火苗、小字条和点击区域，位置跟着镜头算 -->
+  <div class="cake-layer" id="cakeLayer">
+    <a class="cake-hit" id="cakeHit" href="credits.html" aria-label="小蔚，生日快乐。点小蛋糕去下一页">
+      <span class="cake-glow" aria-hidden="true"></span>
+      <span class="cake-flame" aria-hidden="true"><i></i></span>
+      <span class="cake-smoke" aria-hidden="true"><i></i><i></i><i></i></span>
+    </a>
+    <span class="cake-tag" id="cakeTag" aria-hidden="true">小蔚，生日快乐</span>
+  </div>
+
+  <!-- 灯光：开灯时一圈暖光，关灯时只剩窗外的月光 -->
+  <div class="light-vignette" aria-hidden="true"></div>
+  <div class="light-dark" aria-hidden="true"></div>
+
+  <header class="qf-head">
+    <h1 class="qf-title">潜伏手账</h1>
+    <p class="qf-sub" id="qfSub">台灯下放着一本手账。点封面翻开它，按住拖动可以看看四周。</p>
+  </header>
+
+  <nav class="qf-nav" aria-label="页面导航">
+    <a class="qf-pill" href="elephants.html"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg><span>回到小象那里</span></a>
+    <a class="qf-pill next" href="credits.html"><span>下一页</span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+  </nav>
+
+  <div class="qf-tools" role="toolbar" aria-label="手账操作">
+    <button type="button" class="qf-tool" id="tLamp">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2h8l4 10H4L8 2Z"/><path d="M12 12v6"/><path d="M8 22v-2c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2H8Z"/></svg>
+      <span id="tLampText">关掉台灯</span>
+    </button>
+    <button type="button" class="qf-tool" id="tPrev" hidden>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      <span>往前翻</span>
+    </button>
+    <button type="button" class="qf-tool main" id="tBook">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span id="tBookText">打开手账</span>
+    </button>
+    <button type="button" class="qf-tool" id="tNext" hidden>
+      <span>往后翻</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  </div>
+</main>
+
+<!-- 大图和人物说明 -->
+<div class="qf-lightbox" id="lb" hidden>
+  <div class="lb-veil" data-close></div>
+  <div class="lb-body" role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+    <figure class="lb-figure" id="lbFigure">
+      <img id="lbImg" alt="">
+    </figure>
+    <aside class="lb-notes" id="lbNotes">
+      <h2 class="lb-title" id="lbTitle"></h2>
+      <p class="lb-caption" id="lbCaption"></p>
+      <div class="lb-people" id="lbPeople"></div>
+    </aside>
+    <nav class="lb-pager" aria-label="切换">
+      <button type="button" id="lbPrev"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span id="lbPrevText">上一张</span></button>
+      <span id="lbCount">1 / 5</span>
+      <button type="button" id="lbNext"><span id="lbNextText">下一张</span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+    </nav>
+    <button type="button" class="lb-close" data-close aria-label="关闭大图"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  </div>
+</div>
+
+<script type="module" src="js/qianfu-app.js"></script>
+</body>
+</html>
