@@ -1,0 +1,314 @@
+{
+  "format": "carousel-lamp-share",
+  "version": 1,
+  "stamp": 1793781457688,
+  "exported": "2026-11-04T08:37:37.688Z",
+  "carousel": [
+    {
+      "slot": 0,
+      "image": "carousel/01.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/01-original.jpg"
+    },
+    {
+      "slot": 1,
+      "image": "carousel/02.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/02-original.jpg"
+    },
+    {
+      "slot": 2,
+      "image": "carousel/03.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/03-original.jpg"
+    },
+    {
+      "slot": 3,
+      "image": "carousel/04.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/04-original.jpg"
+    },
+    {
+      "slot": 4,
+      "image": "carousel/05.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/05-original.jpg"
+    },
+    {
+      "slot": 5,
+      "image": "carousel/06.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/06-original.jpg"
+    },
+    {
+      "slot": 6,
+      "image": "carousel/07.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/07-original.jpg"
+    },
+    {
+      "slot": 7,
+      "image": "carousel/08.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/08-original.jpg"
+    },
+    {
+      "slot": 8,
+      "image": "carousel/09.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/09-original.jpg"
+    },
+    {
+      "slot": 9,
+      "image": "carousel/10.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/10-original.jpg"
+    },
+    {
+      "slot": 10,
+      "image": "carousel/11.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/11-original.jpg"
+    },
+    {
+      "slot": 11,
+      "image": "carousel/12.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/12-original.jpg"
+    },
+    {
+      "slot": 12,
+      "image": "carousel/13.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/13-original.jpg"
+    },
+    {
+      "slot": 13,
+      "image": "carousel/14.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/14-original.jpg"
+    },
+    {
+      "slot": 14,
+      "image": "carousel/15.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/15-original.jpg"
+    },
+    {
+      "slot": 15,
+      "image": "carousel/16.jpg",
+      "crop": {
+        "zoom": 1,
+        "x": 0,
+        "y": 0
+      },
+      "original": "carousel/16-original.jpg"
+    }
+  ],
+  "map": {
+    "base": null,
+    "pins": [
+      {
+        "id": "246e56df-9857-4714-94e7-83d15b98ab3a",
+        "kind": "stop",
+        "order": 1,
+        "lon": 120.24223025985555,
+        "lat": 28.716714446613295,
+        "title": "乌镇",
+        "note": "是我们的第一次出游！那个时候还不是很熟悉呢，第一次被人拿相机记录，虽然很不好意思，但是超级开心呀！",
+        "created": 1793526270565,
+        "photo": "map/01.jpg"
+      },
+      {
+        "id": "a1a78315-83e1-4edd-ba97-d9a47680e5fc",
+        "kind": "stop",
+        "order": 2,
+        "lon": 118.98009400014037,
+        "lat": 32.09237997918698,
+        "title": "南京",
+        "note": "一起去了红山动物园，看到了好多小动物，还有一群真正热爱这份事业的工作人员，还去了中山陵和音乐台，虽然是冬天，但南京暖暖的",
+        "created": 1793780664666,
+        "photo": "map/02.jpg"
+      },
+      {
+        "id": "1a3126e8-eddf-4fb5-93ed-748faee85628",
+        "kind": "stop",
+        "order": 3,
+        "lon": 120.59180710170851,
+        "lat": 30.14817856704323,
+        "title": "西湖",
+        "note": "美丽的西湖！好——大——，那天我们绕着西湖走啊走，聊了那么多，还有外星人，晚上还去了特别有意思的小店嘻嘻",
+        "created": 1793780771642,
+        "photo": "map/03.jpg"
+      },
+      {
+        "id": "e01e95c9-5be3-4920-b59c-c62ddaea1319",
+        "kind": "stop",
+        "order": 4,
+        "lon": 119.92468247117068,
+        "lat": 31.49291074023315,
+        "title": "苏州",
+        "note": "苏州我们来过两次呢！第一次主要在逛园林，第二次在买买买！好多小店！猫猫虫！一个大购入——钱包扁扁",
+        "created": 1793780875602,
+        "photo": "map/04.jpg"
+      },
+      {
+        "id": "1f900677-1b2a-4a9e-96b3-a3bc826dd8c9",
+        "kind": "stop",
+        "order": 5,
+        "lon": 120.55581399786682,
+        "lat": 30.832319819135876,
+        "title": "常熟",
+        "note": "常熟的寺庙味道好好闻！还有挂起来的小风铃——吃了很好吃的名字很复杂的面",
+        "created": 1793780990789,
+        "photo": "map/05.jpg"
+      },
+      {
+        "id": "4a880da9-38d5-4e93-b8dc-07d374bd65af",
+        "kind": "stop",
+        "order": 6,
+        "lon": 119.93121642828997,
+        "lat": 29.46691775756244,
+        "title": "安吉",
+        "note": "美丽的安吉，清清爽爽的安吉！在天荒坪小学前溯溪，然后两个人冒着大雨骑着电动车进山兜圈，轮成落汤鸡哈哈",
+        "created": 1793781178898,
+        "photo": "map/06.jpg"
+      },
+      {
+        "id": "38168060-7ce0-4b48-8154-6fe7e92c91d4",
+        "kind": "stop",
+        "order": 7,
+        "lon": 119.20514833248951,
+        "lat": 29.532665882072827,
+        "title": "千岛湖",
+        "note": "美丽的千岛湖，美丽的大酒店~~~~骑着小马的小蔚，永远昂扬！",
+        "created": 1793781249359,
+        "photo": "map/07.jpg"
+      },
+      {
+        "id": "677048d4-caa2-48eb-be88-f96ed7d60210",
+        "kind": "stop",
+        "order": 8,
+        "lon": 116.92590210898115,
+        "lat": 30.434633518903382,
+        "title": "婺源",
+        "note": "最近去过的地方嘻嘻嘻，超级美丽的背景，导演，你真的很漂亮",
+        "created": 1793781292963,
+        "photo": "map/08.jpg"
+      },
+      {
+        "id": "d4083f74-1bc6-4817-8674-92d9c4bb1528",
+        "kind": "stop",
+        "order": 9,
+        "lon": 116.71184442524859,
+        "lat": 29.752622502723682,
+        "title": "景德镇",
+        "note": "坐在小蔚后面兜风————超舒服的！",
+        "created": 1793781324368,
+        "photo": "map/09.jpg"
+      },
+      {
+        "id": "dce01222-75e7-4a1f-8aa9-f753caa3fa55",
+        "kind": "stop",
+        "order": 10,
+        "lon": 118.85437201725817,
+        "lat": 28.129957343473286,
+        "title": "呈坎",
+        "note": "呈坎的小鱼灯，超级有年味的一张哈哈哈哈哈",
+        "created": 1793781356114,
+        "photo": "map/10.jpg"
+      },
+      {
+        "id": "d86a0402-373c-4cb7-b63b-055cccd1fb39",
+        "kind": "stop",
+        "order": 11,
+        "lon": 118.34594516824589,
+        "lat": 32.88863810101528,
+        "title": "海宁",
+        "note": "放一张大导演拍的背影，然后什么都不说（拽）",
+        "created": 1793781400295,
+        "photo": "map/11.jpg"
+      },
+      {
+        "id": "birth-hebei",
+        "kind": "birth",
+        "seal": "冀",
+        "lon": 115.16450795474204,
+        "lat": 38.141831558314415,
+        "title": "保定",
+        "note": "",
+        "photo": "map/birth-hebei.jpg"
+      },
+      {
+        "id": "birth-sichuan",
+        "kind": "birth",
+        "seal": "川",
+        "lon": 104.07,
+        "lat": 30.67,
+        "title": "都江堰",
+        "note": "",
+        "photo": "map/birth-sichuan.jpg"
+      }
+    ]
+  }
+}
