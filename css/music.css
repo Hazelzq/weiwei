@@ -1,0 +1,167 @@
+/* 外壳页：画框、播放器、歌词。 */
+html, body.shell { height: 100%; overflow: hidden; }
+body.shell { margin: 0; background: #21182f; }
+#stage { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+
+/* ---------- 歌词排字 ---------- */
+.lyric-stage { position: relative; }
+.lyric-line { position: absolute; inset: 0; transition: opacity .7s ease, filter .7s ease, transform .7s ease; }
+.lyric-line.leaving { opacity: 0; filter: blur(6px); transform: translateY(-3%); }
+.chunk {
+  position: absolute; white-space: nowrap; line-height: 1; letter-spacing: -0.02em; transform-origin: 30% 70%;
+  font-family: 'Noto Sans JP', 'Noto Sans SC', 'Source Han Sans SC', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN',
+    'PingFang SC', 'Yu Gothic', 'Meiryo', 'Microsoft YaHei', sans-serif;
+  font-weight: 900;
+}
+.chunk.latin { letter-spacing: 0; }
+.ch {
+  display: inline-block; color: var(--ly-ink); opacity: 0;
+  transform: translateY(calc(var(--dy, 0em) + .25em)) rotate(var(--r, 0deg)) scale(.6);
+  filter: blur(4px);
+  transition: opacity .35s ease-out, transform .55s cubic-bezier(.2, 1.5, .35, 1), filter .45s ease-out, color 1s ease, text-shadow 1s ease;
+}
+.ch.on { opacity: 1; transform: translateY(var(--dy, 0em)) rotate(var(--r, 0deg)); filter: none; }
+.ch.now { color: var(--ly-now); text-shadow: 0 0 .16em var(--ly-glow), 0 0 .45em var(--ly-glow), 0 0 .9em var(--ly-glow-soft); }
+.lyric-line.instant .ch, .lyric-line.instant .lyric-rule, .lyric-line.instant .lyric-trans { transition: none; }
+.lyric-rule {
+  position: absolute; height: 1px; background: var(--ly-line); opacity: 0;
+  transform: scaleX(0); transform-origin: left; transition: transform .9s cubic-bezier(.2, .8, .2, 1), opacity .4s;
+}
+.lyric-rule::before { content: ''; position: absolute; left: 9px; top: -10px; width: 1px; height: 21px; background: var(--ly-line); }
+.lyric-trans {
+  position: absolute; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif; font-size: clamp(14px, 1.35vw, 19px);
+  letter-spacing: .06em; color: var(--ly-trans); opacity: 0; transform: translateY(6px);
+  transition: opacity .6s .2s, transform .6s .2s;
+}
+.with-trans .lyric-rule, .with-trans .lyric-trans { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .ch, .lyric-line, .lyric-rule, .lyric-trans { transition: opacity .2s !important; } }
+
+/* 页面上的歌词浮层：放在右侧空白处，不挡点击。 */
+/* 每一页的歌词浮层都用同样的大小（和小象页、潜伏手账页一致），放在右上角。 */
+.lyrics-inline {
+  position: fixed; z-index: 10; right: 1.5vw; top: 14vh; width: min(20vw, 300px); height: 32vh;
+  pointer-events: none; transition: opacity .4s;
+}
+@media (max-width: 1280px) { body:is([data-theme='grove'], [data-theme='study'], [data-theme='cake']) .lyrics-inline { display: none !important; } }
+.lyrics-inline.muted { opacity: .12; }
+body[data-theme='night'] .lyrics-inline {
+  --ly-ink: #f1e9df; --ly-now: #a3bdff; --ly-glow: #7fa2ffaa; --ly-glow-soft: #7fa2ff55; --ly-trans: #cdc2d8; --ly-line: #a3bdff;
+}
+body[data-theme='night'] .lyrics-inline .ch:not(.now) { text-shadow: 0 2px 14px #140a1e66; }
+body[data-theme='jiangnan'] .lyrics-inline {
+  --ly-ink: #3a3f4b; --ly-now: #3e64d8; --ly-glow: #3e64d899; --ly-glow-soft: #3e64d840; --ly-trans: #6d675d; --ly-line: #3e64d8;
+}
+@media (max-width: 760px) { .lyrics-inline { display: none !important; } }
+
+/* ---------- 播放器 ---------- */
+.player {
+  position: fixed; z-index: 20; right: 20px; bottom: max(22px, env(safe-area-inset-bottom));
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --pl-bg: #332c42cc; --pl-fg: #eee8ef; --pl-line: #ffffff22; --pl-track: #ffffff26; --pl-fill: #f1e9df;
+}
+body[data-theme='grove'] .player { --pl-bg: #e9f4f3e0; --pl-fg: #1c3d6e; --pl-line: #ffffff99; --pl-track: #1c3d6e22; --pl-fill: #1c3d6e; }
+body[data-theme='study'] .player { --pl-bg: #16130ed9; --pl-fg: #eadfc6; --pl-line: #eadfc626; --pl-track: #eadfc626; --pl-fill: #e4d6b3; }
+body[data-theme='jiangnan'] .player { --pl-bg: #f7f2e6e8; --pl-fg: #34322e; --pl-line: #e0d5bf; --pl-track: #34322e1c; --pl-fill: #2a2f3d; }
+.pl-main, .pl-add {
+  display: flex; align-items: center; gap: 9px; height: 50px; padding: 0 8px; border-radius: 26px;
+  background: var(--pl-bg); color: var(--pl-fg); border: 1px solid var(--pl-line);
+  -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); box-shadow: 0 10px 30px #0000001f;
+}
+.pl-add { padding: 0 18px 0 14px; font-size: 14px; cursor: pointer; transition: background .2s; }
+.pl-add svg { width: 18px; height: 18px; }
+.pl-add:hover { filter: brightness(1.08); }
+.pl-btn {
+  width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0;
+  color: inherit; cursor: pointer; transition: background .2s, opacity .2s;
+}
+.pl-btn svg { width: 17px; height: 17px; stroke-width: 1.8; }
+.pl-btn:hover { background: color-mix(in srgb, currentColor 12%, transparent); }
+.pl-btn.play { background: var(--pl-fg); color: var(--pl-bg); }
+.pl-btn.play svg { width: 15px; height: 15px; fill: currentColor; }
+.pl-btn.play:hover { opacity: .85; background: var(--pl-fg); }
+.pl-btn[aria-pressed='false'] { opacity: .45; }
+.pl-title { max-width: 150px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pl-time { font: 11px/1 ui-monospace, 'SF Mono', Menlo, Consolas, monospace; opacity: .7; font-variant-numeric: tabular-nums; }
+.pl-bar { position: relative; width: 120px; height: 6px; border-radius: 3px; background: var(--pl-track); cursor: pointer; touch-action: none; }
+.pl-bar::after { content: ''; position: absolute; inset: -10px 0; }
+.pl-bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 3px; background: var(--pl-fill); }
+.pl-tools { display: flex; gap: 2px; padding-left: 4px; border-left: 1px solid var(--pl-line); }
+.player button:focus-visible, .pl-bar:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+@media (max-width: 1400px) { .player .pl-title { display: none; } }
+@media (max-width: 1100px) { .player .pl-time { display: none; } .player .pl-bar { width: 90px; } }
+@media (max-width: 760px) {
+  .player { top: max(12px, env(safe-area-inset-top)); bottom: auto; right: 10px; }
+  .pl-main { position: relative; height: 42px; gap: 2px; padding: 0 4px; overflow: hidden; }
+  .pl-add { height: 40px; padding: 0 14px 0 11px; font-size: 13px; }
+  .player .pl-bar { position: absolute; left: 12px; right: 12px; bottom: 3px; width: auto; height: 2px; }
+  .player #plLyric { display: none; }
+  .pl-tools { border: 0; padding: 0; }
+  .pl-btn { width: 32px; height: 32px; }
+}
+
+/* ---------- 沉浸式歌词 ---------- */
+.immersive {
+  position: fixed; inset: 0; z-index: 40; overflow: hidden;
+  background: radial-gradient(ellipse at 50% 42%, #ffffff 0%, #fbfbfd 55%, #eef0f5 100%);
+  --ly-ink: #3a3f4b; --ly-now: #3e64d8; --ly-glow: #3e64d899; --ly-glow-soft: #3e64d838; --ly-trans: #8d919c; --ly-line: #3e64d8;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  animation: imm-in .45s ease-out;
+}
+@keyframes imm-in { from { opacity: 0; } }
+.dust { position: absolute; inset: 0; width: 100%; height: 100%; }
+.imm-stage { position: absolute; left: 50%; top: 7vh; transform: translateX(-50%); width: min(640px, 90vw); height: 72vh; }
+.imm-title { position: absolute; left: 28px; top: 24px; margin: 0; font-size: 13px; color: #8d919c; letter-spacing: .04em; }
+.imm-tools { position: absolute; right: 18px; top: 16px; display: flex; gap: 4px; color: #5b6070; }
+.imm-bar {
+  position: absolute; left: 50%; bottom: max(5vh, env(safe-area-inset-bottom)); transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px; width: min(360px, 86vw); height: 50px; padding: 0 20px 0 8px;
+  background: #fff; border-radius: 26px; box-shadow: 0 12px 34px #1e284614, 0 1px 0 #ffffff inset; color: #1c2233;
+  --pl-bg: #ffffff; --pl-fg: #1c2233; --pl-track: #eceef2; --pl-fill: #1c2233;
+}
+.imm-bar .pl-time { color: #8b909c; opacity: 1; }
+.imm-bar .pl-bar { flex: 1; width: auto; }
+@media (max-width: 760px) { .imm-stage { top: 9vh; height: 70vh; } .imm-title { left: 18px; top: 22px; max-width: 60vw; } }
+
+/* ---------- 添加音乐 ---------- */
+.music-dialog { width: 480px !important; max-width: calc(100vw - 32px) !important; padding: 24px !important; gap: 18px !important; background: #fdfdfe !important; color: #2a2f3d; }
+.music-dialog .dialog-title { font-size: 20px; }
+.md-row { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.md-row .btn { height: 40px; }
+.md-file { font-size: 13px; color: #6b7080; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.md-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.md-label { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: #4b5060; }
+.md-label .btn { height: 30px; font-weight: 400; }
+.music-dialog textarea, .music-dialog input {
+  width: 100%; border: 1px solid #dfe2ea; border-radius: 10px; background: #fff; padding: 9px 11px;
+  font: 13px/1.6 ui-monospace, 'SF Mono', Menlo, Consolas, 'PingFang SC', monospace; color: #2a2f3d; outline: none;
+}
+.music-dialog input { font-family: inherit; font-size: 14px; }
+.music-dialog textarea:focus, .music-dialog input:focus { border-color: #3e64d8; box-shadow: 0 0 0 3px #3e64d822; }
+.md-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.md-footer { display: flex; gap: 8px; justify-content: flex-end; border-top: 1px solid #eceef2; padding-top: 14px; }
+.md-footer .btn { height: 40px; padding: 0 18px; }
+.md-footer .btn-default { background: #2a2f3d; }
+.md-remove { margin-right: auto; color: #b23a2e; }
+.shell-toast { bottom: 96px; z-index: 60; }
+/* 第五页（五线谱蛋糕）：蓝底上用白字，正在唱的字发淡金光。 */
+body[data-theme='cake'] .lyrics-inline {
+  --ly-ink: #ffffff; --ly-now: #ffe9a8; --ly-glow: #ffe3a0bb; --ly-glow-soft: #ffffff55; --ly-trans: #dce8ff; --ly-line: #ffffff;
+}
+body[data-theme='cake'] .lyrics-inline .ch:not(.now) { text-shadow: 0 0 10px #7fa6ffcc; }
+body[data-theme='cake'] .player { --pl-bg: #0d2c9ccc; --pl-fg: #f2f6ff; --pl-line: #ffffff33; --pl-track: #ffffff30; --pl-fill: #ffffff; }
+/* 小象页：画面中间是树和小象，歌词浮层放在右上角的天空里，窄屏时不显示。 */
+body[data-theme='grove'] .lyrics-inline {
+  --ly-ink: #f4f8f6; --ly-now: #ffe7a3; --ly-glow: #ffd36baa; --ly-glow-soft: #ffd36b44; --ly-trans: #e3f0ef; --ly-line: #ffe7a3;
+}
+body[data-theme='grove'] .lyrics-inline .ch:not(.now) { text-shadow: 0 2px 12px #1c3d6e66; }
+/* 潜伏手账页：歌词浮层放在右上角的墙上，打开手账或看大图时变淡，窄屏时不显示。 */
+body[data-theme='study'] .lyrics-inline {
+  --ly-ink: #eadfc6; --ly-now: #ffd98a; --ly-glow: #ffc85aaa; --ly-glow-soft: #ffc85a44; --ly-trans: #c9bfa8; --ly-line: #ffd98a;
+}
+body[data-theme='study'] .lyrics-inline .ch:not(.now) { text-shadow: 0 2px 12px #000a; }
+
+/* 等待第一次点击才能出声时，播放键轻轻呼吸，提示音乐马上就来 */
+body.await-play .pl-btn.play { animation: await-play 1.6s ease-in-out infinite; }
+@keyframes await-play { 50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--pl-fg) 22%, transparent); } }
+@media (prefers-reduced-motion: reduce) { body.await-play .pl-btn.play { animation: none; } }

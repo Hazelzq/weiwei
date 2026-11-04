@@ -1,0 +1,45 @@
+/* 最后一页：署名与致谢。安静、居中，像演出结束后的谢幕卡。 */
+.credits {
+  min-height: 100svh; display: grid; place-items: center; padding: 48px 20px calc(48px + env(safe-area-inset-bottom));
+  background: radial-gradient(ellipse at 50% 40%, #594360 0%, #3c2b4d 50%, #21182f 100%);
+  color: #ede5d9;
+}
+.credits-inner { width: min(540px, 100%); display: flex; flex-direction: column; align-items: center; text-align: center; }
+.credits-ribbon { position: relative; width: clamp(170px, 30vw, 230px); line-height: 0; }
+.credits-ribbon img {
+  width: 100%; height: auto;
+  filter: brightness(1.3) drop-shadow(0 0 3px #ffe5dacc) drop-shadow(0 0 10px #f1baca80) drop-shadow(0 0 16px #e5afd62b);
+}
+.credits-ribbon .title-sparkles { opacity: 1; }
+.credits-title {
+  margin-top: 18px; font-family: WenKai, 'Songti SC', 'Noto Serif CJK SC', serif; font-weight: 400;
+  font-size: clamp(30px, 4vw, 40px); letter-spacing: 6px; color: #f6e4e6;
+  text-shadow: 0 0 12px #f1baca55;
+}
+.original-credit {
+  margin-top: 14px; display: flex; flex-direction: column; gap: 2px;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 13px; line-height: 1.6; color: #c5bace;
+}
+.original-credit a, .credit-list a { color: inherit; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+.original-credit a:hover, .credit-list a:hover { opacity: .75; }
+
+.credit-list {
+  width: 100%; margin-top: 26px; text-align: left; border-top: 1px solid #ffffff1f;
+}
+.credit-list > div { display: grid; grid-template-columns: 7.5em 1fr; gap: 16px; padding: 11px 2px; border-bottom: 1px solid #ffffff14; }
+.credit-list dt { font-size: 13px; color: #b9aec4; padding-top: 1px; }
+.credit-list dd { font-size: 14px; line-height: 1.75; color: #ede5ee; }
+
+.credits-nav { display: flex; gap: 10px; margin-top: 26px; flex-wrap: wrap; justify-content: center; }
+.nav-pill {
+  display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 18px; border-radius: 24px;
+  font-size: 14px; color: #eee8ef; background: #756b8733; border: 1px solid #e3d8f129; transition: background .2s;
+}
+.nav-pill svg { width: 16px; height: 16px; stroke-width: 1.6; }
+.nav-pill:hover { background: #ffffff1c; }
+.nav-pill.home { background: #dfc39830; color: #f7e9cd; }
+.nav-pill.home:hover { background: #dfc39848; }
+
+@media (max-width: 520px) {
+  .credit-list > div { grid-template-columns: 1fr; gap: 2px; }
+}

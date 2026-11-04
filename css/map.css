@@ -1,0 +1,191 @@
+/* 地图页：烟雨江南。宣纸、水墨、青绿、朱砂印，让册子像摊在雨后窗边的桌上。 */
+.atlas {
+  --ink: #34322e; --ink-soft: #6d675d; --seal: #b23a2e; --rice: #f7f2e6;
+  position: relative; overflow: hidden; min-height: 600px; height: 100svh;
+  background: #c8955c;
+  color: var(--ink);
+}
+/* 书桌照片做背景（assets/desk.jpg）。开场时是原图；书翻开后镜头推近，照片以桌垫为中心放大并虚化。 */
+.desk-bg {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 55.6% 100%;
+  transform-origin: var(--mat-x, 55%) var(--mat-y, 87%);
+  transition: transform 1.6s cubic-bezier(.65, 0, .35, 1), filter 1.6s ease;
+  pointer-events: none; user-select: none;
+  will-change: transform, filter; /* 推近时放大、虚化交给合成层做，不和三维画面抢主线程 */
+}
+.atlas.reading .desk-bg {
+  transform: translate(calc(50% - var(--mat-x, 55%)), calc(50% - var(--mat-y, 87%))) scale(3.4);
+  filter: blur(5px) brightness(1.03) saturate(.92);
+}
+@media (prefers-reduced-motion: reduce) { .desk-bg { transition: none; } }
+.atlas-scene { position: absolute; inset: 0 0 92px; touch-action: none; }
+.atlas-scene.orbit { inset: 0; } /* 合上册子环顾时，三维的照片铺满整页 */
+.atlas-scene canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity .7s ease; }
+/* 三维画面准备好（贴图、着色器都就绪）以后才淡入，开场时不会先闪出没贴图的样子 */
+.atlas-scene.live canvas { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .atlas-scene canvas { transition: none; } }
+
+.atlas-head {
+  position: absolute; z-index: 2; left: clamp(16px, 3vw, 56px); top: 30px; pointer-events: none;
+  color: #f7f2e6; text-shadow: 0 1px 3px #0009, 0 0 12px #0006;
+}
+.atlas-title {
+  font-family: WenKai, 'Kaiti SC', 'STKaiti', 'KaiTi', 'Songti SC', serif; font-weight: 400;
+  font-size: 15px; line-height: 1.3; letter-spacing: 4px; color: inherit;
+}
+.atlas-count { margin-top: 3px; font-size: 12px; letter-spacing: .06em; color: inherit; opacity: .85; }
+
+.atlas-nav { position: absolute; z-index: 3; right: clamp(16px, 3vw, 48px); top: 30px; display: flex; gap: 8px; }
+.nav-pill {
+  display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 15px; border-radius: 24px;
+  font-size: 13px; color: var(--ink); background: #f7f2e6d9; border: 1px solid #ffffffa6;
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 6px 20px #3b3a3612;
+  transition: background .2s;
+}
+.nav-pill svg { width: 16px; height: 16px; stroke-width: 1.6; }
+.nav-pill:hover { background: #ffffffa8; }
+.nav-pill:last-child { background: #f8e6dfdd; color: #8a2e25; border-color: #b23a2e33; }
+.nav-pill:last-child:hover { background: #b23a2e29; }
+
+/* 工具栏沿用首页白天样式，主按钮换成朱砂色。 */
+.atlas .toolbar .upload { background: #b23a2e1f; color: #8a2e25; }
+.atlas .toolbar .upload:hover { background: #b23a2e30; }
+.atlas .loading { color: var(--ink); background: var(--rice); border: 1px solid #e3d9c4; box-shadow: 0 10px 30px #3b3a361a; }
+
+.place-banner {
+  position: absolute; z-index: 4; top: 96px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 24px;
+  background: #f7f2e6f2; border: 1px solid #e0d5bf; color: var(--ink); font-size: 14px; white-space: nowrap;
+  box-shadow: 0 10px 30px #3b3a3622; animation: banner-in .3s ease-out;
+}
+.place-banner > svg { width: 18px; height: 18px; color: var(--seal); }
+.place-banner .btn { border-radius: 20px; }
+@keyframes banner-in { from { opacity: 0; transform: translate(-50%, -6px); } }
+
+.atlas-hint {
+  position: absolute; z-index: 2; left: 50%; bottom: 104px; transform: translateX(-50%);
+  font-size: 13px; color: var(--ink-soft); white-space: nowrap; pointer-events: none;
+  background: #f7f2e6b8; padding: 6px 14px; border-radius: 16px;
+}
+
+/* 地点卡片：一页从册子里抽出来的宣纸笺。 */
+.stop-card {
+  position: absolute; z-index: 6; right: 24px; top: 88px; width: 300px; max-height: calc(100% - 200px);
+  overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+  padding: 16px 16px 12px; border-radius: 6px;
+  background: var(--rice); border: 1px solid #e0d5bf; color: var(--ink);
+  box-shadow: 0 16px 44px #3b3a3630, 0 1px 0 #fff inset;
+  animation: card-in .25s ease-out;
+}
+@keyframes card-in { from { opacity: 0; transform: translateX(10px); } }
+.stop-close { position: absolute; top: 8px; right: 8px; z-index: 1; background: #f7f2e6cc; }
+.stop-photo { background: #fffdf7; padding: 8px 8px 10px; transform: rotate(-1.2deg); box-shadow: 0 6px 16px #3b3a3626; }
+.stop-photo img { width: 100%; max-height: 300px; object-fit: contain; background: #e9e2d2; }
+.stop-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--seal); margin-top: 4px; letter-spacing: .04em; }
+.stop-seal {
+  display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 3px;
+  background: var(--seal); color: #fbefe2; font-family: WenKai, 'Kaiti SC', 'KaiTi', serif; font-size: 17px; transform: rotate(-3deg);
+}
+.stop-card h2 { font-family: WenKai, 'Kaiti SC', 'STKaiti', 'KaiTi', 'Songti SC', serif; font-size: 26px; line-height: 1.3; padding-right: 24px; }
+.stop-note { font-size: 14px; line-height: 1.8; color: #4d4a44; white-space: pre-wrap; overflow-wrap: anywhere; }
+.stop-steps, .stop-actions { display: flex; gap: 4px; }
+.stop-steps { justify-content: space-between; border-top: 1px dashed #cbbfa6; padding-top: 8px; }
+.stop-actions { flex-wrap: wrap; }
+.stop-card .btn-ghost { color: var(--ink); border-radius: 18px; font-weight: 400; }
+.stop-card .btn-ghost:hover { background: #34322e0f; }
+.stop-card .danger { color: var(--seal); }
+.stop-card .danger.armed { background: #b23a2e1f; }
+
+/* 添加地点对话框：沿用首页相片编辑器的版式，换成宣纸色。 */
+.pin-editor { background: var(--rice, #f7f2e6) !important; }
+.pin-preview { width: 100%; aspect-ratio: 452 / 470; object-fit: cover; background: #e0e4e8; }
+.pin-empty { aspect-ratio: 452 / 470; }
+.pin-editor .crop-controls label { gap: 6px; }
+.text-field {
+  width: 100%; border: 1px solid #d8cfbd; border-radius: 8px; background: #fffdf8; padding: 8px 11px;
+  font-size: 14px; line-height: 1.5; color: #34322e; outline: none; transition: border-color .15s, box-shadow .15s;
+}
+.text-field::placeholder { color: #a7a094; }
+.text-field:focus { border-color: #b23a2e; box-shadow: 0 0 0 3px #b23a2e22; }
+.crop-controls .text-field { min-height: 0; accent-color: auto; }
+.pin-editor .btn-default:not(:disabled), #baseDialog .btn-default { background: #4f6e6e; }
+#baseDialog .batch-upload { background: #b23a2e; }
+
+@media (max-width: 700px) {
+  .atlas-head { top: 14px; left: 14px; }
+  .atlas-title { font-size: 14px; letter-spacing: 3px; }
+  .atlas-count { margin-top: 4px; font-size: 12px; }
+  .atlas-nav { top: auto; bottom: calc(max(16px, env(safe-area-inset-bottom)) + 66px); left: 50%; right: auto; transform: translateX(-50%); }
+  .nav-pill { height: 34px; padding: 0 12px; font-size: 12px; white-space: nowrap; }
+  .atlas-scene { inset: 80px 0 150px; }
+  .atlas-hint { bottom: 160px; font-size: 12px; white-space: normal; width: 86%; text-align: center; }
+  .place-banner { top: 84px; font-size: 13px; }
+  .stop-card {
+    left: 12px; right: 12px; top: auto; bottom: calc(max(16px, env(safe-area-inset-bottom)) + 112px); width: auto; max-height: 52svh;
+    display: grid; grid-template-columns: 92px 1fr; column-gap: 14px; row-gap: 4px; padding: 12px 12px 8px;
+  }
+  .stop-photo { grid-row: 1 / span 3; align-self: start; padding: 5px 5px 7px; }
+  .stop-photo[hidden] + .stop-meta, .stop-photo[hidden] ~ h2, .stop-photo[hidden] ~ .stop-note { grid-column: 1 / -1; }
+  .stop-photo img { max-height: 112px; }
+  .stop-meta, .stop-card h2, .stop-note { grid-column: 2; padding-right: 26px; }
+  .stop-card h2 { font-size: 21px; }
+  .stop-note { font-size: 13px; line-height: 1.6; max-height: 4.9em; overflow-y: auto; }
+  .stop-steps, .stop-actions { grid-column: 1 / -1; }
+  .stop-steps { margin-top: 6px; }
+  .atlas.has-stop .atlas-nav { display: none; }
+  body.has-stop .toast { bottom: auto; top: 80px; }
+}
+@media (prefers-reduced-motion: reduce) { .stop-card, .place-banner { animation: none; } }
+
+/* 开场：相机拍照、放回桌上、翻开册子。期间收起界面。 */
+.atlas-head, .atlas-nav, .atlas .bottom { transition: opacity .8s ease; }
+/* 注意：这里用 opening 而不是 intro。style.css 里的 .intro 是首页标题的样式（会把整页往右挪 5%、点不动），不能借用 */
+.atlas.opening .atlas-head, .atlas.opening .atlas-nav, .atlas.opening .bottom, .atlas.opening .atlas-hint { opacity: 0; pointer-events: none; }
+.flash { position: absolute; inset: 0; z-index: 30; background: #fff; opacity: 0; pointer-events: none; }
+.flash.on { animation: flash .6s ease-out; }
+@keyframes flash { 0% { opacity: 0; } 7% { opacity: .96; } 100% { opacity: 0; } }
+.skip-intro {
+  position: absolute; z-index: 31; left: 50%; bottom: max(28px, env(safe-area-inset-bottom)); transform: translateX(-50%);
+  padding: 8px 16px; border-radius: 18px; font-size: 12px; letter-spacing: .06em; color: #6d675d;
+  background: #f7f2e699; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); cursor: pointer;
+  animation: skip-in 1s .8s both;
+}
+@keyframes skip-in { from { opacity: 0; } }
+
+/* 合上册子：只留书桌、相机和合上的册子。 */
+.atlas-head, .atlas .stop-card, .atlas-hint { transition: opacity .6s ease; }
+.atlas.closed .atlas-head, .atlas.closed .bottom, .atlas.closed .atlas-hint, .atlas.closed .stop-card, .atlas.closed .place-banner { opacity: 0; pointer-events: none; }
+.open-bar {
+  position: absolute; z-index: 5; left: 50%; top: 28px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px; padding: 6px 16px 6px 6px; border-radius: 26px;
+  background: #f7f2e6e6; border: 1px solid #ffffffa6; box-shadow: 0 10px 30px #3b2a1a2a;
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  font-size: 12px; color: #6d675d; white-space: nowrap; animation: banner-in-bottom .5s ease-out;
+}
+.open-bar .btn { height: 40px; padding: 0 18px; border-radius: 20px; background: #b23a2e; font-size: 14px; }
+.open-bar .btn:hover { background: #9d3328; }
+@keyframes banner-in-bottom { from { opacity: 0; transform: translate(-50%, -8px); } }
+@media (max-width: 700px) {
+  .open-bar span { display: none; }
+  .open-bar { padding: 6px; left: 12px; top: max(12px, env(safe-area-inset-top)); transform: none; animation: none; }
+  .atlas.closed .atlas-nav { top: calc(max(12px, env(safe-area-inset-top)) + 60px); bottom: auto; left: 12px; transform: none; }
+}
+
+/* 地图下方：去第三页看小象。和朱砂主色区分开，用画里大树的深蓝。 */
+.walk-link {
+  display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 18px 0 14px; border-radius: 20px;
+  font-family: WenKai, 'Kaiti SC', 'STKaiti', 'KaiTi', serif; font-size: 16px; letter-spacing: 1px;
+  color: #f4f1e6; background: #1c3d6e; box-shadow: 0 6px 18px #1c3d6e40; transition: background .2s, transform .2s;
+}
+.walk-link svg { width: 20px; height: 20px; }
+.walk-link:hover { background: #26508c; transform: translateY(-1px); }
+.walk-link:active { transform: translateY(0); }
+@media (min-width: 701px) { .atlas .bottom { padding-bottom: max(14px, env(safe-area-inset-bottom)); } }
+@media (max-width: 700px) {
+  .walk-link { position: absolute; right: 12px; bottom: calc(100% - 6px); height: 34px; padding: 0 12px 0 10px; font-size: 13px; letter-spacing: 0; }
+  .walk-link svg { width: 17px; height: 17px; }
+  .atlas-nav { left: 12px; transform: none; }
+  .atlas-nav .nav-pill:last-child { display: none; }
+  .atlas.has-stop .walk-link { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .walk-link { transition: none; } }

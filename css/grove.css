@@ -1,0 +1,178 @@
+/* 第三页：大树下的小象。画面就是那幅水彩，界面尽量退后；日记像从本子里撕下来的一页，配一张旧相片。 */
+@font-face {
+  font-family: 'LongCang';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/longcang-diary.woff2') format('woff2');
+}
+
+.grove {
+  --sky: #80c2cf; --hill: #5a9fbd; --ink-blue: #1c3d6e; --gold: #e0b146; --paper: #e8ece2; --pen: #2b3035;
+  position: relative; overflow: hidden; height: 100svh; min-height: 520px;
+  background: var(--sky); color: var(--ink-blue);
+}
+.grove-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.grove-head {
+  position: absolute; z-index: 3; left: clamp(16px, 3vw, 52px); top: 30px; max-width: min(420px, 60vw); pointer-events: none;
+  color: #fff; text-shadow: 0 1px 3px #12305a99, 0 0 12px #12305a55;
+}
+.grove-title {
+  font-family: WenKai, 'Kaiti SC', 'STKaiti', 'KaiTi', serif; font-weight: 400;
+  font-size: 15px; line-height: 1.3; letter-spacing: 4px; color: inherit;
+}
+.grove-sub { margin-top: 3px; font-size: 12px; line-height: 1.6; color: #eef6f5; opacity: .9; }
+
+.grove-nav { position: absolute; z-index: 3; right: clamp(16px, 3vw, 48px); top: 28px; display: flex; gap: 8px; }
+.grove .nav-pill {
+  display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 15px; border-radius: 24px;
+  font-size: 13px; color: var(--ink-blue); background: #e9f4f3cc; border: 1px solid #ffffff99;
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 6px 20px #1c3d6e14;
+  transition: background .2s;
+}
+.grove .nav-pill svg { width: 16px; height: 16px; stroke-width: 1.6; }
+.grove .nav-pill:hover { background: #ffffffd9; }
+.grove .nav-pill.next { background: #1c3d6e; color: #eef6f5; border-color: transparent; }
+.grove .nav-pill.next:hover { background: #26508c; }
+
+.grove-loading {
+  position: absolute; z-index: 4; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  padding: 10px 18px; border-radius: 20px; font-size: 14px; color: var(--ink-blue); background: #e9f4f3e6;
+}
+.grove-loading:empty { display: none; }
+
+/* 跟着小象走的透明按钮，悬停或选中时露出名字。 */
+.herd { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.calf {
+  position: absolute; left: 0; top: 0; pointer-events: auto; border-radius: 45%;
+  background: transparent; cursor: pointer; will-change: transform;
+}
+.calf:focus-visible { outline: 2px dashed #fff8dd; outline-offset: 2px; }
+.calf-tag {
+  position: absolute; left: 50%; bottom: 100%; transform: translate(-50%, 4px); white-space: nowrap;
+  padding: 3px 12px 2px; border-radius: 4px; background: var(--paper); color: var(--pen);
+  font-family: LongCang, WenKai, 'Kaiti SC', 'KaiTi', cursive; font-size: 21px; line-height: 1.3;
+  box-shadow: 0 4px 14px #12305a33; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+}
+.calf-tag::after {
+  content: ''; position: absolute; left: 50%; top: 100%; width: 8px; height: 8px; margin: -4px 0 0 -4px;
+  background: var(--paper); transform: rotate(45deg);
+}
+.calf:hover .calf-tag, .calf:focus-visible .calf-tag { opacity: 1; transform: translate(-50%, -2px) rotate(-2deg); }
+
+@media (max-width: 700px) {
+  .grove-head { top: 14px; left: 14px; right: 14px; max-width: none; }
+  .grove-title { font-size: 14px; letter-spacing: 3px; }
+  .grove-sub { font-size: 11px; }
+  .grove-nav { top: auto; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%; right: auto; transform: translateX(-50%); }
+  .grove .nav-pill { height: 36px; padding: 0 14px; white-space: nowrap; }
+}
+
+/* ---------- 日记 ---------- */
+.diary-root { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 16px; }
+.diary-veil { position: absolute; inset: 0; background: #0f2440a6; animation: veil-in .3s ease-out; }
+@keyframes veil-in { from { opacity: 0; } }
+.diary-wrap {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 12px;
+  width: min(440px, 100%); max-height: 100%;
+}
+.diary {
+  position: relative; width: 100%; min-height: 0; display: flex; flex-direction: column;
+  border-radius: 3px; background: var(--paper, #e8ece2); color: var(--pen, #2b3035);
+  box-shadow: 0 30px 70px #06142a66, 0 2px 6px #06142a33;
+  transform: rotate(-1deg); animation: diary-in .45s cubic-bezier(.2, .9, .3, 1.1);
+}
+@keyframes diary-in { from { opacity: 0; transform: translateY(26px) rotate(3deg) scale(.96); } }
+.diary.turn { animation: diary-turn .4s ease-out; }
+@keyframes diary-turn { from { opacity: .2; transform: rotate(-1deg) translateX(14px); } }
+
+/* 标签：从本子上方探出来的一截。 */
+.diary-tab {
+  position: absolute; left: 22px; bottom: 100%; display: flex; align-items: center; gap: 7px;
+  padding: 5px 14px 3px; border-radius: 6px 6px 0 0; background: #1c3d6e; color: #f3f1e6;
+  font-family: LongCang, WenKai, 'Kaiti SC', 'KaiTi', cursive; font-size: 20px; line-height: 1.25;
+}
+.tab-crown { display: block; width: 16px; height: 12px; background: #e0b146; clip-path: polygon(0 100%, 0 25%, 26% 62%, 50% 0, 74% 62%, 100% 25%, 100% 100%); }
+.tab-crown.red { background: #e2533b; }
+.diary-close {
+  position: absolute; z-index: 2; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%;
+  display: grid; place-items: center; color: #4c555b; background: #e8ece2cc; transition: background .2s;
+}
+.diary-close:hover { background: #d9dfd4; }
+.diary-close svg { width: 18px; height: 18px; }
+
+.diary-page { overflow-y: auto; overscroll-behavior: contain; border-radius: 3px; scrollbar-width: thin; }
+
+/* 横线纸：行高和横线间距一致，字落在线上。 */
+.diary-paper {
+  --lh: 34px;
+  position: relative; padding: 22px 30px 14px;
+  font-family: LongCang, 'Kaiti SC', 'STKaiti', 'KaiTi', cursive; font-size: 23px; line-height: var(--lh);
+  background:
+    radial-gradient(ellipse at 50% 0%, #f2f4ec 0%, transparent 70%),
+    repeating-linear-gradient(to bottom, transparent 0 calc(var(--lh) - 1px), #9aa79c55 calc(var(--lh) - 1px) var(--lh)),
+    linear-gradient(to bottom, #e9ede3, #dfe5da);
+  background-position: 0 0, 0 22px, 0 0;
+  color: var(--pen, #2b3035);
+}
+.diary-paper p { margin: 0; overflow-wrap: anywhere; }
+.d-date, .d-no { text-align: center; }
+.d-no { margin-bottom: var(--lh); }
+.d-sign { text-align: right; padding-right: .5em; }
+.d-label { color: #3b4f68; }
+.ch { display: inline-block; opacity: 0; transform: translateY(var(--y, 0)) rotate(var(--r, 0deg)); transition: opacity .28s ease-out; }
+.ch.on { opacity: var(--o, 1); }
+
+.diary-photo { position: relative; aspect-ratio: 16 / 10; background: #3c5a64; overflow: hidden; }
+.diary-photo canvas, .diary-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.diary-photo > * { animation: photo-in 1.2s ease-out both; }
+@keyframes photo-in { from { opacity: 0; filter: brightness(1.6) saturate(.4); } }
+
+.diary-pager {
+  display: flex; align-items: center; gap: 6px; padding: 4px; border-radius: 22px;
+  background: #eef5f3e6; color: #1c3d6e; font-size: 13px; box-shadow: 0 8px 24px #06142a40;
+}
+.diary-pager button {
+  display: inline-flex; align-items: center; gap: 4px; height: 34px; padding: 0 14px; border-radius: 18px;
+  font-size: 13px; transition: background .2s;
+}
+.diary-pager button svg { width: 15px; height: 15px; }
+.diary-pager button:hover:not(:disabled) { background: #1c3d6e14; }
+.diary-pager button:disabled { opacity: .35; cursor: default; }
+.diary-pager span { min-width: 3.2em; text-align: center; font-variant-numeric: tabular-nums; color: #4d6580; }
+
+@media (max-width: 480px) {
+  .diary-paper { --lh: 31px; font-size: 21px; padding: 18px 20px 10px; background-position: 0 0, 0 18px, 0 0; }
+  .diary { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .diary, .diary.turn, .diary-veil, .diary-photo > * { animation: none; }
+  .ch { transition: none; }
+}
+
+/* ---------- 一直在下的雪 ---------- */
+.snow-canvas { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; }
+
+/* ---------- 去第四页的小唱片机 ---------- */
+/* 一台很小的留声机，外面绕着一圈字，慢慢转着，不抢小象的戏。 */
+.gramo {
+  position: absolute; z-index: 3; left: 0; top: 0; width: clamp(116px, 10vw, 150px); aspect-ratio: 1;
+  transform: translate(var(--tx, -999px), var(--ty, 0)); opacity: 0; transition: opacity .5s;
+  border-radius: 50%; text-decoration: none;
+}
+.gramo.ready { opacity: 1; }
+.gramo svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 4px 6px #12305a40); }
+.gramo-ring { transform-origin: 80px 80px; animation: gramo-spin 48s linear infinite; }
+.gramo-ring text {
+  font-family: WenKai, 'Kaiti SC', 'STKaiti', 'KaiTi', serif; font-size: 13px; letter-spacing: 1px;
+  fill: #1c3d6e; stroke: #eef6f4; stroke-width: 2.6px; paint-order: stroke; stroke-linejoin: round;
+}
+.gramo-horn { transform-box: fill-box; transform-origin: 80% 90%; transition: transform .4s; }
+@keyframes gramo-spin { to { transform: rotate(360deg); } }
+.gramo:hover .gramo-ring, .gramo:focus-visible .gramo-ring { animation-duration: 12s; }
+.gramo:hover .gramo-body, .gramo:focus-visible .gramo-body { animation: gramo-bob 1s ease-in-out infinite; }
+@keyframes gramo-bob { 50% { transform: translateY(-2px); } }
+.gramo:focus-visible { outline: 2px dashed #fff8dd; outline-offset: 2px; }
+@media (max-width: 700px) { .gramo { width: 104px; } }
+@media (prefers-reduced-motion: reduce) { .gramo-ring, .gramo:hover .gramo-body { animation: none; } }
